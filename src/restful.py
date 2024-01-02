@@ -28,5 +28,5 @@ def resource_create(resource: Resource):
         vault_to_k8s.create_k8s_resource(resource.model_dump())
     except Exception as e:
         logger.error(e)
-        raise HTTPException(status_code=500, detail="backend error")
+        raise HTTPException(status_code=500, detail=f"backend error, reason: {str(e)}")
     return {"status": "success"}
