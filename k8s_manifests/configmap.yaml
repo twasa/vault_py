@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-py-config
+  namespace: vault-py
+data:
+  vault_scheme: https
+  valult_fqdn: vault.v16cp.me

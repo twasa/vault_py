@@ -4,10 +4,6 @@ metadata:
   name: vault-py
   namespace: vault-py
 spec:
-  securityContext:
-    runAsUser: 10000
-    runAsGroup: 10000
-    fsGroup: 10000
   selector:
     matchLabels:
       app: vault-py
@@ -18,11 +14,18 @@ spec:
     spec:
       serviceAccount: vault-py
       serviceAccountName: vault-py
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
       containers:
-        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py
+        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py:0.1.0
           imagePullPolicy: IfNotPresent
           name: vault-py
+          command: ["uvicorn", "restful:app"]
           envFrom:
             - secretRef:
                 name: vault-py-secret
+            - configMapRef:
+                name: vault-py-config
           resources: {}
