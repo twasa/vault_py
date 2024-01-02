@@ -4,18 +4,18 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: vault-py-cluster-role
 rules:
-- apiGroups: [""]
-  resources: ["secret", "configmap"]
-  verbs: ["list", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["list", "create", "update", "patch", "delete"]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: vault-py
 subjects:
-- kind: ServiceAccount
-  name: vault-py
-  namespace: vault-py
+  - kind: ServiceAccount
+    name: vault-py
+    namespace: vault-py
 roleRef:
   kind: ClusterRole
   name: vault-py-cluster-role
