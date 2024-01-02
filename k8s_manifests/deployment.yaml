@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-py
+  namespace: vault-py
+spec:
+  securityContext:
+    runAsUser: 10000
+    runAsGroup: 10000
+    fsGroup: 10000
+  selector:
+    matchLabels:
+      app: vault-py
+  template:
+    metadata:
+      labels:
+        app: vault-py
+    spec:
+      serviceAccount: vault-py
+      serviceAccountName: vault-py
+      containers:
+        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py
+          imagePullPolicy: IfNotPresent
+          name: vault-py
+          envFrom:
+            - secretRef:
+                name: vault-py-secret
+          resources: {}
