@@ -43,7 +43,7 @@ build_container_image:
 
 delivery_to_ecr:
   stage: delivery
-  needs: ["check_container", "container_build"]
+  needs: ["check_container", "build_container_image"]
   script:
     - aws ecr get-login-password | docker login -u "${ERC_ACCOUNT}" --password-stdin "${ECR_REPO_FQDN}"
     - repo_exist=$(aws ecr describe-repositories | jq -r --arg RNAME "$ECR_REPO_NAME" '.repositories[] | select(.repositoryName == $RNAME)')
