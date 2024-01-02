@@ -26,7 +26,7 @@ def info_get():
 def resource_create(resource: Resource):
     try:
         vault_to_k8s.create_k8s_resource(resource.model_dump())
+        return {"status": "success"}
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=500, detail=f"backend error, reason: {str(e)}")
-    return {"status": "success"}
