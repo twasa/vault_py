@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-py
+  namespace: vault-py
+spec:
+  selector:
+    app: vault-py
+  ports:
+    - name: vault-py
+      port: 8000
+      targetPort: 8000

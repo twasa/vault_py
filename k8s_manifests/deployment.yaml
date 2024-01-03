@@ -22,7 +22,9 @@ spec:
         - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py:0.5.0
           imagePullPolicy: IfNotPresent
           name: vault-py
-          command: ["uvicorn", "restful:app"]
+          command: ["uvicorn", "restful:app", "--host", "0.0.0.0"]
+          ports:
+            - containerPort: 8000
           envFrom:
             - secretRef:
                 name: vault-py-secret
