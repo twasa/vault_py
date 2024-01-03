@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "vault-py"
-version = "0.1.0"
+version = "0.9.0"
 description = ""
 authors = ["william <william@twroa.com>"]
 readme = "README.md"
-packages = [{include = "vault_py"}]
+packages = [{ include = "vault_py" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -14,8 +14,6 @@ jmespath = "1.0.1"
 python-dotenv = "1.0.0"
 fastapi = "0.108.0"
 uvicorn = "0.25.0"
-pyjwt = "2.8.0"
-
 
 [tool.poetry.group.dev.dependencies]
 python-dotenv = "1.0.0"
