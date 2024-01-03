@@ -27,13 +27,15 @@ class K8S(object):
         self.coreapi = client.CoreV1Api(api_client=self.api_client)
 
     def get_cluster_info(self):
-        return{ "cluster": self.api_client.configuration.host}
+        if response := self.coreapi.read_namespaced_config_map(name='cluster-info', namespace='kube-system'):
+            data = response.data
+        return{ "cluster": data}
 
     def pod_list(self):
-        print("Listing pods with their IPs:")
+        logger.info("Listing pods with their IPs:")
         ret = self.coreapi.list_pod_for_all_namespaces(watch=False)
         for pod_obj in ret.items:
-            print("%s\t%s\t%s" %
+            logger.info("%s\t%s\t%s" %
                 (
                     pod_obj.status.pod_ip,
                     pod_obj.metadata.namespace,
@@ -48,7 +50,6 @@ class K8S(object):
         except Exception as e:
             logger.error(str(e))
             return False
-
 
     def secret_create_or_update(self, name: str, metadata: dict[Any, Any], data: dict[Any, Any]):
         namespace = metadata['namespace']

@@ -17,14 +17,16 @@ class Resource(BaseModel):
     source_kv2_name: str
     source_kv2_path: str
 
-@app.get("/_info")
+@app.get("/_info/")
 def info_get():
-    return {
+    return JSONResponse(
+        {
         "vault_info": vault_to_k8s.vault_api.info(),
         "k8s_info": vault_to_k8s.k8s_api.get_cluster_info()
-    }
+        }
+    )
 
-@app.post("/resource")
+@app.post("/resource/")
 def resource_create(resource: Resource):
     try:
         vault_to_k8s.create_k8s_resource(resource.model_dump())
