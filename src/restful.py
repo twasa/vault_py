@@ -28,6 +28,10 @@ def jwt_token_check(request: Request):
         except (KeyError, jwt.exceptions.PyJWTError):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing access token.")
 
+@app.get("/")
+def root():
+    return {"status": "ok"}
+
 @app.get("/_info/")
 def info_get():
     return {
