@@ -9,6 +9,9 @@ spec:
       app: vault-py
   template:
     metadata:
+      annotations:
+        config.linkerd.io/default-inbound-policy: deny
+        linkerd.io/inject: enabled
       labels:
         app: vault-py
     spec:
