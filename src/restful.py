@@ -54,6 +54,7 @@ def annotation_data_parse(request_data: dict[str, str]):
     try:
         annotation_data_raw = request_data['request']['object']['spec']['template']['metadata']['annotations']
         annotation_data['target_resource_namespace'] = request_data['request']['namespace']
+        annotation_data['target_resource_name'] = annotation_data_raw[f'{annotation_prefix}/target-resource-name']
         annotation_data['target_resource_type'] = annotation_data_raw[f'{annotation_prefix}/target-resource-type']
         annotation_data['source_kv2_name'] = annotation_data_raw[f'{annotation_prefix}/kv2-name']
         annotation_data['source_kv2_path'] = annotation_data_raw[f'{annotation_prefix}/kv2-path']

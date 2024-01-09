@@ -33,7 +33,7 @@ spec:
         runAsGroup: 10000
         fsGroup: 10000
       containers:
-        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py:0.14.0
+        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py:0.15.0
           imagePullPolicy: IfNotPresent
           name: vault-py
           volumeMounts:
