@@ -36,6 +36,12 @@ def resource_create(resource: Resource):
         logger.error(e)
         raise HTTPException(status_code=500, detail=f"backend error, reason: {str(e)}")
 
+def admission_uid_parse(request_data: dict[str, str]):
+    try:
+        return request_data['request']['uid']
+    except KeyError:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="uid not found")
+
 @app.post("/mutate/")
 async def mutation(request_data: Request):
     content_type = request_data.headers.get("content-type", None)
@@ -43,7 +49,7 @@ async def mutation(request_data: Request):
         raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail=f"Unsupported media type {content_type}")
     request_dict = await request_data.json()
     logger.info(request_dict)
-    uid = request_dict.get('uid', None)
+    uid = admission_uid_parse(request_dict)
     content =  {
         "apiVersion": "admission.k8s.io/v1",
         "kind": "AdmissionReview",
