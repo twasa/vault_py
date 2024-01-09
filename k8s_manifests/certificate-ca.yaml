@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault-py-ca
+  namespace: vault-py
+spec:
+  isCA: true
+  commonName: vault-py.local
+  secretName: vault-py-ca
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  duration: 8760h
+  renewBefore: 360h
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned-cluster-issuer
+  subject:
+    organizations:
+      - v16

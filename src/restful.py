@@ -1,6 +1,6 @@
 
 import python_libs.vault_to_k8s as vault_to_k8s
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from python_libs import jlogger
@@ -34,3 +34,19 @@ def resource_create(resource: Resource):
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=500, detail=f"backend error, reason: {str(e)}")
+
+@app.post("/mutate/")
+def mutation(request_body: Request):
+    request_dict = request_body.json()
+    logger.info(request_dict)
+    uid = request_dict['uid']
+    content =  {
+        "apiVersion": "admission.k8s.io/v1",
+        "kind": "AdmissionReview",
+        "response": {
+            "uid": uid,
+            "allowed": True,
+            "status": {"code": 200, "message": "ok"}
+        }
+    }
+    return JSONResponse(content=content)

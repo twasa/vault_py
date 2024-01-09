@@ -10,11 +10,15 @@ spec:
   template:
     metadata:
       annotations:
-        config.linkerd.io/default-inbound-policy: deny
+        config.linkerd.io/default-inbound-policy: all-unauthenticated
         linkerd.io/inject: enabled
       labels:
         app: vault-py
     spec:
+      volumes:
+        - name: vault-py-tls
+          secret:
+            secretName: vault-py-tls
       serviceAccount: vault-py
       serviceAccountName: vault-py
       securityContext:
@@ -22,10 +26,26 @@ spec:
         runAsGroup: 10000
         fsGroup: 10000
       containers:
-        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py:0.10.0
+        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py:0.11.0
           imagePullPolicy: IfNotPresent
           name: vault-py
-          command: ["uvicorn", "restful:app", "--host", "0.0.0.0"]
+          volumeMounts:
+            - name: vault-py-tls
+              readOnly: true
+              mountPath: "/vault_py/tls/"
+          command:
+            [
+              "uvicorn",
+              "restful:app",
+              "--host",
+              "0.0.0.0",
+              "--ssl-ca-certs",
+              "/vault_py/tls/ca.pem",
+              "--ssl-certfile",
+              "/vault_py/tls/cert.pem",
+              "--ssl-keyfile",
+              "/vault_py/tls/key.pem",
+            ]
           ports:
             - containerPort: 8000
           envFrom:
