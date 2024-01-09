@@ -1,3 +1,4 @@
+import os
 
 import python_libs.vault_to_k8s as vault_to_k8s
 from fastapi import FastAPI, HTTPException, Request
@@ -9,6 +10,7 @@ from starlette import status
 logger = jlogger.Jloger()
 
 app = FastAPI()
+annotation_prefix = os.getenv('annotation_prefix', 'vaultpy.io')
 
 class Resource(BaseModel):
     name: str
@@ -18,7 +20,7 @@ class Resource(BaseModel):
     source_kv2_name: str
     source_kv2_path: str
 
-@app.get("/_info/")
+@app.get("/_info")
 def info_get():
     return JSONResponse(
         {
@@ -27,7 +29,7 @@ def info_get():
         }
     )
 
-@app.post("/resource/")
+@app.post("/resource")
 def resource_create(resource: Resource):
     try:
         vault_to_k8s.create_k8s_resource(resource.model_dump())
@@ -36,21 +38,44 @@ def resource_create(resource: Resource):
         logger.error(e)
         raise HTTPException(status_code=500, detail=f"backend error, reason: {str(e)}")
 
+def content_validation(request_data: Request):
+    content_type = request_data.headers.get("content-type", 'None')
+    if content_type != "application/json":
+        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail=f"Unsupported media type {content_type}")
+
 def admission_uid_parse(request_data: dict[str, str]):
     try:
         return request_data['request']['uid']
     except KeyError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="uid not found")
 
-@app.post("/mutate/")
+def annotation_data_parse(request_data: dict[str, str]):
+    annotation_data = {}
+    try:
+        annotation_data_raw = request_data['request']['object']['spec']['template']['metadata']['annotations']
+        annotation_data['target_resource_namespace'] = request_data['request']['namespace']
+        annotation_data['target_resource_type'] = annotation_data_raw[f'{annotation_prefix}/target-resource-type']
+        annotation_data['source_kv2_name'] = annotation_data_raw[f'{annotation_prefix}/kv2-name']
+        annotation_data['source_kv2_path'] = annotation_data_raw[f'{annotation_prefix}/kv2-path']
+        return annotation_data
+    except KeyError as e:
+        logger.error(str(e))
+        return {}
+
+def admission_resource_create(request_dict: dict[str, str]):
+    if annotation_data := annotation_data_parse(request_dict):
+        try:
+            vault_to_k8s.create_k8s_resource(annotation_data)
+        except Exception as e:
+            logger.error(str(e))
+
+@app.post("/mutate")
 async def mutation(request_data: Request):
-    content_type = request_data.headers.get("content-type", None)
-    if content_type != "application/json":
-        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail=f"Unsupported media type {content_type}")
+    content_validation(request_data)
     request_dict = await request_data.json()
-    logger.info(request_dict)
+    admission_resource_create(request_dict)
     uid = admission_uid_parse(request_dict)
-    content =  {
+    content = {
         "apiVersion": "admission.k8s.io/v1",
         "kind": "AdmissionReview",
         "response": {

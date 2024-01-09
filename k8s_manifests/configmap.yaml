@@ -6,3 +6,4 @@ metadata:
 data:
   vault_scheme: https
   valult_fqdn: vault.v16cp.me
+  annotation_prefix: vaultpy.io

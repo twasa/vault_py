@@ -5,7 +5,24 @@ metadata:
   annotations:
     cert-manager.io/inject-ca-from: vault-py/vault-py-ca
 webhooks:
-  - name: "vaultpy.vault-py.svc.cluster.local"
+  - name: "vault-py.vault-py.svc"
+    namespaceSelector:
+      matchExpressions:
+        - key: config.vault-py.io/admission-webhooks
+          operator: In
+          values:
+            - enabled
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - kube-system
+            - cert-manager
+    objectSelector:
+      matchExpressions:
+        - key: app
+          operator: NotIn
+          values:
+            - vault-py
     rules:
       - apiGroups: ["apps"]
         apiVersions: ["v1"]
@@ -17,7 +34,7 @@ webhooks:
         namespace: "vault-py"
         name: "vault-py"
         port: 8000
-        path: "/mutate/"
+        path: "/mutate"
     admissionReviewVersions: ["v1"]
     sideEffects: None
     timeoutSeconds: 5
