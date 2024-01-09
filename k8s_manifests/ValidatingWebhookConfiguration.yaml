@@ -5,10 +5,10 @@ metadata:
   annotations:
     cert-manager.io/inject-ca-from: vault-py/vault-py-ca
 webhooks:
-  - name: "vault-py.vault-py.svc"
+  - name: "vaultpy.vault-py.svc"
     namespaceSelector:
       matchExpressions:
-        - key: config.vault-py.io/admission-webhooks
+        - key: vaultpy.io/admission-webhooks
           operator: In
           values:
             - enabled
