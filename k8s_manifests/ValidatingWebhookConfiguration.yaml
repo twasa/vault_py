@@ -1,0 +1,23 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: "vaultpy"
+  annotations:
+    cert-manager.io/inject-ca-from: vault-py/vault-py-ca
+webhooks:
+  - name: "vaultpy.vault-py.svc.cluster.local"
+    rules:
+      - apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["deployments"]
+        scope: "Namespaced"
+    clientConfig:
+      service:
+        namespace: "vault-py"
+        name: "vault-py"
+        port: 8000
+        path: "/mutate/"
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
+    timeoutSeconds: 5
