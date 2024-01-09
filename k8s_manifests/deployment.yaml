@@ -19,6 +19,13 @@ spec:
         - name: vault-py-tls
           secret:
             secretName: vault-py-tls
+            items:
+              - key: ca.crt
+                path: ca.crt
+              - key: tls.crt
+                path: tls.crt
+              - key: tls.key
+                path: tls.key
       serviceAccount: vault-py
       serviceAccountName: vault-py
       securityContext:
@@ -26,7 +33,7 @@ spec:
         runAsGroup: 10000
         fsGroup: 10000
       containers:
-        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py:0.11.0
+        - image: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py:0.12.0
           imagePullPolicy: IfNotPresent
           name: vault-py
           volumeMounts:
@@ -40,11 +47,11 @@ spec:
               "--host",
               "0.0.0.0",
               "--ssl-ca-certs",
-              "/vault_py/tls/ca.pem",
+              "/vault_py/tls/ca.crt",
               "--ssl-certfile",
-              "/vault_py/tls/cert.pem",
+              "/vault_py/tls/tls.crt",
               "--ssl-keyfile",
-              "/vault_py/tls/key.pem",
+              "/vault_py/tls/tls.key",
             ]
           ports:
             - containerPort: 8000

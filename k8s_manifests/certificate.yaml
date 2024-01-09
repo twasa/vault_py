@@ -13,6 +13,7 @@ spec:
       - v16
   dnsNames:
     - "vault-py"
+    - "vault-py.vault-py.svc"
     - "vault-py.svc.cluster.local"
     - "*.vault-py.vault-py.svc.cluster.local"
     - "localhost"

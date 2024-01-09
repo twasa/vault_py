@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from python_libs import jlogger
+from starlette import status
 
 logger = jlogger.Jloger()
 
@@ -36,10 +37,13 @@ def resource_create(resource: Resource):
         raise HTTPException(status_code=500, detail=f"backend error, reason: {str(e)}")
 
 @app.post("/mutate/")
-def mutation(request_body: Request):
-    request_dict = request_body.json()
+async def mutation(request_data: Request):
+    content_type = request_data.headers.get("content-type", None)
+    if content_type != "application/json":
+        raise HTTPException(status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail=f"Unsupported media type {content_type}")
+    request_dict = await request_data.json()
     logger.info(request_dict)
-    uid = request_dict['uid']
+    uid = request_dict.get('uid', None)
     content =  {
         "apiVersion": "admission.k8s.io/v1",
         "kind": "AdmissionReview",
