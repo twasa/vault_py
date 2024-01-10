@@ -8,13 +8,12 @@ images:
     newName: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py
     newTag: 0.18.0
 resources:
-  - namespace.yaml
-  - certificate-ca.yaml
-  - issuer-ca.yaml
-  - certificate.yaml
-  - service_account.yaml
-  - rbac.yaml
-  - admission.yaml
-  - configmap.yaml
-  - deployment.yaml
-  - service.yaml
+  - ../base
+configMapGenerator:
+  - name: vault-py-config
+    literals:
+      - VAULT_SCHEME=https
+      - VAULT_FQDN=vault.v16cp.me
+      - K8S_ANNOTATION_PREFIX=vaultpy.io
+      - VAULT_AUTH_K8S_PATH=devops-eks
+      - VAULT_AUTH_K8S_ROLE=vault-py
