@@ -52,12 +52,12 @@ spec:
               "/vault_py/tls/tls.crt",
               "--ssl-keyfile",
               "/vault_py/tls/tls.key",
+              "--log-level",
+              "warning",
             ]
           ports:
             - containerPort: 8000
           envFrom:
-            - secretRef:
-                name: vault-py-secret
             - configMapRef:
                 name: vault-py-config
           resources: {}
