@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+generatorOptions:
+  disableNameSuffixHash: true
+namespace: vault-py
+images:
+  - name: vault_py
+    newName: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py
+    newTag: 0.16.0
+resources:
+  - namespace.yaml
+  - certificate-ca.yaml
+  - issuer-ca.yaml
+  - certificate.yaml
+  - service_account.yaml
+  - rbac.yaml
+  - admission.yaml
+  - configmap.yaml
+  - deployment.yaml
+  - service.yaml
