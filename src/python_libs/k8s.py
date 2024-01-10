@@ -18,7 +18,7 @@ class K8S(object):
 
     def __init__(self):
         in_develop = appconfig.in_develop
-        if in_develop:
+        if in_develop.lower() == 'true':
             logger.info("in develop mode...")
             k8s_config = config.load_kube_config(config_file=appconfig.kubeconfig)
         else:
