@@ -9,8 +9,10 @@ vault-py a python implement K8S secret/configmap auto injection and source from 
 ## deployment
 ```shell
 git clone git@gitlab.v16cp.me:sre/vault-py.git && cd vault-py
-kubectl apply -f k8s_manifests/namespace.yaml
-kubectl apply -f k8s_manifests/
+# check resources will be create
+kubectl kustomize --load-restrictor LoadRestrictionsNone k8s_manifests
+# deploy to k8s
+kubectl kustomize --load-restrictor LoadRestrictionsNone k8s_manifests | kubectl apply -f - 
 ```
 
 ## how to injection
