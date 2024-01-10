@@ -24,21 +24,21 @@ def k8s_data_build(config: dict[str, str]):
         data = b64_encoder(data)
     return data
 
-def k8s_json_data_combind(config: dict[str, str]):
-    name = config.get('target_resource_name')
-    data = k8s_data_build(config)
-    metadata = k8s_metadata_build(name, config)
+def k8s_json_data_combind(manifest_data: dict[str, str]):
+    name = manifest_data.get('target_resource_name')
+    metadata = k8s_metadata_build(name, manifest_data)
+    data = k8s_data_build(manifest_data)
     return {
         "name": name,
         "metadata": metadata,
         "data": data
     }
 
-def create_k8s_resource(config: dict[str, str]) -> dict[str, str]:
-    k8s_json_data = k8s_json_data_combind(config)
-    if config.get('target_resource_type') == 'secret':
+def create_k8s_resource(manifest_data: dict[str, str]) -> dict[str, str]:
+    k8s_json_data = k8s_json_data_combind(manifest_data)
+    if manifest_data.get('target_resource_type') == 'secret':
         api_function = getattr(k8s_api, 'secret_create_or_update')
-    elif config.get('target_resource_type') == 'configmap':
+    elif manifest_data.get('target_resource_type') == 'configmap':
         api_function = getattr(k8s_api, 'configmap_create_or_update')
     else:
         raise ValueError('target_resource_type only supported secret or configmap')

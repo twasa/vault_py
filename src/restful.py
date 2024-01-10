@@ -1,16 +1,14 @@
-import os
-
-import python_libs.vault_to_k8s as vault_to_k8s
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from python_libs import jlogger
+from python_libs import config, flows, jlogger
 from starlette import status
 
 logger = jlogger.Jloger()
 
 app = FastAPI()
-annotation_prefix = os.getenv('annotation_prefix', 'vaultpy.io')
+appconfig = config.Appconfig()
+annotation_prefix = appconfig.annotation_prefix
 
 class Resource(BaseModel):
     name: str
@@ -24,15 +22,15 @@ class Resource(BaseModel):
 def info_get():
     return JSONResponse(
         {
-        "vault_info": vault_to_k8s.vault_api.info(),
-        "k8s_info": vault_to_k8s.k8s_api.get_cluster_info()
+        "vault_info": flows.vault_api.info(),
+        "k8s_info": flows.k8s_api.get_cluster_info()
         }
     )
 
 @app.post("/resource")
 def resource_create(resource: Resource):
     try:
-        vault_to_k8s.create_k8s_resource(resource.model_dump())
+        flows.create_k8s_resource(resource.model_dump())
         return JSONResponse(content={"status": "successful"})
     except Exception as e:
         logger.error(e)
@@ -49,7 +47,7 @@ def admission_uid_parse(request_data: dict[str, str]):
     except KeyError:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="uid not found")
 
-def annotation_data_parse(request_data: dict[str, str]):
+def annotation_data_parse(request_data: dict[str, str]) -> dict:
     annotation_data = {}
     try:
         annotation_data_raw = request_data['request']['object']['spec']['template']['metadata']['annotations']
@@ -66,7 +64,7 @@ def annotation_data_parse(request_data: dict[str, str]):
 def admission_resource_create(request_dict: dict[str, str]):
     if annotation_data := annotation_data_parse(request_dict):
         try:
-            vault_to_k8s.create_k8s_resource(annotation_data)
+            flows.create_k8s_resource(annotation_data)
         except Exception as e:
             logger.error(str(e))
 

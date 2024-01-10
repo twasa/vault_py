@@ -1,9 +1,10 @@
-import os
 from typing import Any
 
 from kubernetes import client, config
+from python_libs import config as app_conf
 from python_libs import jlogger
 
+appconfig = app_conf.Appconfig()
 logger = jlogger.Jloger()
 
 
@@ -16,10 +17,10 @@ class K8S(object):
         return cls._instance
 
     def __init__(self):
-        in_develop = os.getenv('in_develop')
+        in_develop = appconfig.in_develop
         if in_develop:
             logger.info("in develop mode...")
-            k8s_config = config.load_kube_config(config_file=os.getenv('KUBECONFIG'))
+            k8s_config = config.load_kube_config(config_file=appconfig.kubeconfig)
         else:
             config.load_incluster_config()
             k8s_config = None
