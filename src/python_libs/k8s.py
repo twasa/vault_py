@@ -20,7 +20,11 @@ class K8S(object):
         in_develop = appconfig.in_develop
         if in_develop.lower() == 'true':
             logger.info("in develop mode...")
-            k8s_config = config.load_kube_config(config_file=appconfig.kubeconfig)
+            try:
+                k8s_config = config.load_kube_config(config_file=appconfig.kubeconfig)
+            except Exception as e:
+                logger.error(str(e))
+                return
         else:
             config.load_incluster_config()
             k8s_config = None

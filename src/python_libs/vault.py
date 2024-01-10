@@ -40,8 +40,8 @@ class Vault:
             logger.error(f'vault auth failed, reason: {r}')
             return
         response_data = json.loads(r.content)
-        self.role = response_data['auth']['metadata']['role_name']
-        self.policies = response_data['auth']['policies']
+        self.role = jmespath.search('auth.metadata.role_name', response_data)
+        self.policies = jmespath.search('auth.policies', response_data)
         self.token = jmespath.search('auth.client_token', response_data)
 
     def auth_k8s(self):
@@ -78,11 +78,11 @@ class Vault:
             return False
         return True
 
-    def kv2_get(self, kv2_mount_path, kv2_path) -> dict[str, str]:
+    def kv2_get(self, kv2_mount_path: str, kv2_path: str) -> dict[str, str]:
         if not self.sys_status():
             self.login()
-        api_prefix = f'/v1/{kv2_mount_path}/data'
-        url = self.vault_uri + api_prefix + kv2_path
+        api_prefix = f'/v1/{kv2_mount_path}/data{kv2_path}'
+        url = self.vault_uri + api_prefix
         headers = {
             'X-Vault-Request': 'true',
             'X-Vault-Token': self.token
