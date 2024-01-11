@@ -91,10 +91,7 @@ spec:
           secret:
             secretName: appconfig
       containers:
-        - image: ubuntu:22.04
-          imagePullPolicy: Always
-          name: william-test
-          command: ["/bin/sleep", "3650d"]
+        - name: hcadmin
           volumeMounts:
             - name: config
               readOnly: true
