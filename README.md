@@ -54,35 +54,37 @@ vault write auth/$K8S_AUTH_PATH/role/$K8S_AUTH_ROLE \
 ```
 
 ## how to injection
-- update your k8s namespace for add metadata.labels, example as below
+- update your k8s namespace for add vaultpy metadata.labels, example apply to [UAT] hcadmin as below
 ```yaml
 apiVersion: v1
 kind: Namespace
 metadata:
-    labels:
-      vaultpy.io/admission-webhooks: enabled
+  labels:
+    vaultpy.io/admission-webhooks: enabled
+  name: hcadmin
 ```
 
-- update your deployment for add annotation, example as below
+- update your deployment for add annotation, example apply to [UAT] hcadmin as below
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: william-test
-  namespace: william-test
+  name: hcadmin-deploy
+  namespace: hcadmin
 spec:
   selector:
     matchLabels:
-      app: william-test
+      app: hcadmin
   template:
     metadata:
       labels:
-        app: william-test
+        app: hcadmin
+        env: uat
       annotations:
         vaultpy.io/target-resource-type: 'secret'
         vaultpy.io/target-resource-name: 'appconfig'
         vaultpy.io/kv2-name: v16
-        vaultpy.io/kv2-path: /stg/HCAdmin
+        vaultpy.io/kv2-path: /uat/HCAdmin
     spec:
       volumes:
         - name: config
@@ -96,6 +98,6 @@ spec:
           volumeMounts:
             - name: config
               readOnly: true
-              mountPath: "/etc/conf/settings.json"
+              mountPath: "/app/appsettings.json"
               subPath: config_content
 ```
