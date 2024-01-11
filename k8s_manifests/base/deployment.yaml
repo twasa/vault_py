@@ -4,6 +4,7 @@ metadata:
   name: vault-py
   namespace: vault-py
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: vault-py
