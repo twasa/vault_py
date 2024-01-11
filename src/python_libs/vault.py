@@ -72,13 +72,17 @@ class Vault:
             'X-Vault-Request': 'true',
             'X-Vault-Token': self.token
         }
-        r = tools_http.http_get(url=url, headers=headers)
-        if not r:
+        try:
+            if not tools_http.http_get(url=url, headers=headers):
+                return False
+            return True
+        except:
             return False
-        return True
+
 
     def kv2_get(self, kv2_mount_path: str, kv2_path: str) -> dict[str, str]:
-        if not self.sys_status():
+        if not self.token:
+            logger.info('vault login...')
             self.login()
         api_prefix = f'/v1/{kv2_mount_path}/data{kv2_path}'
         url = self.vault_uri + api_prefix
@@ -86,9 +90,14 @@ class Vault:
             'X-Vault-Request': 'true',
             'X-Vault-Token': self.token
         }
-        r = tools_http.http_get(url=url, headers=headers)
-        if not r:
+        try:
+            r = tools_http.http_get(url=url, headers=headers)
+            if not r:
+                return
+        except:
+            self.token = ''
             return
+
         json_data = json.loads(r.content)
         data = jmespath.search('data.data', json_data)
         return data
