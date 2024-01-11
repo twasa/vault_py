@@ -1,6 +1,6 @@
+from basemodels.vaultpy import VaultpyConfig
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 from python_libs import config, flows, jlogger
 from starlette import status
 
@@ -8,15 +8,7 @@ logger = jlogger.Jloger()
 
 app = FastAPI()
 appconfig = config.Appconfig()
-annotation_prefix = appconfig.annotation_prefix
 
-class Resource(BaseModel):
-    name: str
-    target_resource_name: str
-    target_resource_namespace: str
-    target_resource_type: str
-    source_kv2_name: str
-    source_kv2_path: str
 
 @app.get("/_info")
 def info_get():
@@ -28,9 +20,9 @@ def info_get():
     )
 
 @app.post("/resource")
-def resource_create(resource: Resource):
+def resource_create(vault_config: VaultpyConfig):
     try:
-        flows.create_k8s_resource(resource.model_dump())
+        flows.create_k8s_resource(vault_config.model_dump())
         return JSONResponse(content={"status": "successful"})
     except Exception as e:
         logger.error(e)
@@ -49,6 +41,7 @@ def admission_uid_parse(request_data: dict[str, str]):
 
 def annotation_data_parse(request_data: dict[str, str]) -> dict:
     annotation_data = {}
+    annotation_prefix = appconfig.annotation_prefix
     try:
         annotation_data_raw = request_data['request']['object']['spec']['template']['metadata']['annotations']
         annotation_data['target_resource_namespace'] = request_data['request']['namespace']
@@ -66,7 +59,8 @@ def admission_resource_create(request_dict: dict[str, str]):
         try:
             flows.create_k8s_resource(annotation_data)
         except Exception as e:
-            logger.error(str(e))
+            raise HTTPException(status_code=500, detail=f"backend error, reason: {str(e)}")
+
 
 @app.post("/mutate")
 async def mutation(request_data: Request):

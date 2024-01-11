@@ -20,9 +20,12 @@ def k8s_data_build(config: dict[str, str]):
         config.get('source_kv2_name'),
         config.get('source_kv2_path'),
     )
+    if not data:
+        raise ValueError('vault server error')
     if config.get('target_resource_type') == 'secret':
         data = b64_encoder(data)
     return data
+    
 
 def k8s_json_data_combind(manifest_data: dict[str, str]):
     name = manifest_data.get('target_resource_name')

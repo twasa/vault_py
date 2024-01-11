@@ -1,6 +1,7 @@
 from typing import Any
 
-from kubernetes import client, config
+from kubernetes import client
+from kubernetes import config as k8s_api_config
 from python_libs import config as app_conf
 from python_libs import jlogger
 
@@ -21,17 +22,18 @@ class K8S(object):
         if in_develop.lower() == 'true':
             logger.info("in develop mode...")
             try:
-                k8s_config = config.load_kube_config(config_file=appconfig.kubeconfig)
+                k8s_config = k8s_api_config.load_kube_config(config_file=appconfig.kubeconfig)
             except Exception as e:
                 logger.error(str(e))
                 return
         else:
-            config.load_incluster_config()
+            k8s_api_config.load_incluster_config()
             k8s_config = None
         self.api_client = client.ApiClient(configuration=k8s_config)
         self.coreapi = client.CoreV1Api(api_client=self.api_client)
 
     def get_cluster_info(self):
+        data = {}
         if response := self.coreapi.read_namespaced_config_map(name='cluster-info', namespace='kube-system'):
             data = response.data
         return{ "cluster": data}

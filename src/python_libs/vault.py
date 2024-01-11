@@ -20,7 +20,6 @@ class Vault:
         self.token = ''
         self.role = ''
         self.policies = []
-        self.login()
 
     def info(self):
         return {

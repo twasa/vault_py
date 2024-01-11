@@ -3,7 +3,9 @@ import socket
 import ssl
 
 import requests
+from python_libs import jlogger
 
+logger = jlogger.Jloger()
 
 def http_get(url: str, headers: dict[str, str] = None, **kwargs):
     http_session = requests.Session()
@@ -12,7 +14,7 @@ def http_get(url: str, headers: dict[str, str] = None, **kwargs):
     response = http_session.get(url=url)
     if not response.status_code == 200:
         message = f'http request error, url: {url}, code: {response.status_code}, message: {response.text}'
-        raise ValueError(message)
+        logger.error(message)
     return response
 
 def http_put(url: str, json_data: dict[str, str], headers: dict[str, str] = None, **kwargs):
@@ -22,7 +24,7 @@ def http_put(url: str, json_data: dict[str, str], headers: dict[str, str] = None
     response = http_session.put(url=url, json=json_data)
     if not response.status_code == 200:
         message = f'http request error, url: {url}, code: {response.status_code}, message: {response.text}'
-        raise ValueError(message)
+        logger.error(message)
     return response
 
 def http_post(url: str, json_data: dict[str, str], headers: dict[str, str] = None, **kwargs):
@@ -32,7 +34,7 @@ def http_post(url: str, json_data: dict[str, str], headers: dict[str, str] = Non
     response = http_session.post(url=url, json=json_data)
     if not response.status_code == 200:
         message = f'http request error, url: {url}, code: {response.status_code}, message: {response.text}'
-        raise ValueError(message)
+        logger.error(message)
     return response
 
 def https_der_cert_bin_retrieve(fqdn: str) -> str:
