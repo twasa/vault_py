@@ -82,18 +82,18 @@ spec:
         env: uat
       annotations:
         vaultpy.io/target-resource-type: secret
-        vaultpy.io/target-resource-name: appconfig
+        vaultpy.io/target-resource-name: app-secret
         vaultpy.io/kv2-name: v16
         vaultpy.io/kv2-path: /uat/HCAdmin
     spec:
       volumes:
-        - name: config
+        - name: app-secret-volume
           secret:
-            secretName: appconfig
+            secretName: app-secret
       containers:
         - name: hcadmin
           volumeMounts:
-            - name: config
+            - name: app-secret-volume
               readOnly: true
               mountPath: "/app/appsettings.json"
               subPath: config_content
