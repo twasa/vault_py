@@ -76,9 +76,9 @@ class Vault:
             if not tools_http.http_get(url=url, headers=headers):
                 return False
             return True
-        except:
+        except Exception as e:
+            logger.error(str(e))
             return False
-
 
     def kv2_get(self, kv2_mount_path: str, kv2_path: str) -> dict[str, str]:
         if not self.token:
@@ -94,7 +94,8 @@ class Vault:
             r = tools_http.http_get(url=url, headers=headers)
             if not r:
                 return
-        except:
+        except Exception as e:
+            logger.error(str(e))
             self.token = ''
             return
 
