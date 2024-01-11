@@ -81,8 +81,8 @@ spec:
         app: hcadmin
         env: uat
       annotations:
-        vaultpy.io/target-resource-type: 'secret'
-        vaultpy.io/target-resource-name: 'appconfig'
+        vaultpy.io/target-resource-type: secret
+        vaultpy.io/target-resource-name: appconfig
         vaultpy.io/kv2-name: v16
         vaultpy.io/kv2-path: /uat/HCAdmin
     spec:
