@@ -96,5 +96,6 @@ spec:
           volumeMounts:
             - name: config
               readOnly: true
-              mountPath: "/app/conf/"
+              mountPath: "/etc/conf/settings.json"
+              subPath: config_content
 ```
