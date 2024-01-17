@@ -1,10 +1,10 @@
 # vault-py
-vault-py a python implement K8S secret/configmap auto injection and source from Hashicorp Vault
+vault-py is a python implement K8S secret/configmap auto injection and source from Hashicorp Vault
 
 ## ecosystems
 - K8S API server
 - cert-mamager installed and config
-- Hashicoro Vault(authentication using AppRole)
+- Hashicorp Vault(authentication using Kubernetes auth method)
 
 ## deployment
 ```shell
@@ -26,18 +26,18 @@ export SA_JWT_TOKEN=$(kubectl -n $NAME_SPACE get secret/$SA_SECRET_NAME --output
 export CA_CERT=$(kubectl config view --raw --minify --flatten --output='jsonpath={.clusters[].cluster.certificate-authority-data}' | base64 --decode)
 export K8S_SERVER=$(kubectl config view --raw --minify --flatten --output='jsonpath={.clusters[].cluster.server}')
 
-# enable k8s auth for k8s cluster
-export K8S_AUTH_PATH=example-k8s
-vault auth enable --path="$K8S_AUTH_PATH" kubernetes
-vault write auth/$K8S_AUTH_PATH/config \
+# enable k8s auth for k8s cluster, example for UAT EKS
+export K8S_NAME=happy_casino_uat
+vault auth enable --path="$K8S_NAME" kubernetes
+vault write auth/$K8S_NAME/config \
     token_reviewer_jwt="$SA_JWT_TOKEN" \
     kubernetes_host="$K8S_SERVER" \
     kubernetes_ca_cert="$CA_CERT"
 
 # create policy
-export VAULT_POLICY=vaultpy-prod
+export VAULT_POLICY=vaultpy-uat-policy
 vault policy write $VAULT_POLICY - <<EOF
-path "v16/data/prod/*" {
+path "v16/data/uat/*" {
   capabilities = ["read", "list"]
 }
 path "sys/health" {
@@ -46,7 +46,7 @@ path "sys/health" {
 EOF
 
 # create k8s auth role for k8s cluster
-vault write auth/$K8S_AUTH_PATH/role/$K8S_AUTH_ROLE \
+vault write auth/$K8S_NAME/role/$K8S_AUTH_ROLE \
     bound_service_account_names=$SA_NAME \
     bound_service_account_namespaces=$NAME_SPACE \
     policies=$VAULT_POLICY \
