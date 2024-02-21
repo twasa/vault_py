@@ -27,7 +27,7 @@ webhooks:
       - apiGroups: ["apps"]
         apiVersions: ["v1"]
         operations: ["CREATE", "UPDATE"]
-        resources: ["pods"]
+        resources: ["*"]
         scope: "Namespaced"
     clientConfig:
       service:
