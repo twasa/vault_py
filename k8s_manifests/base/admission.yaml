@@ -24,10 +24,10 @@ webhooks:
           values:
             - vault-py
     rules:
-      - apiGroups: ["apps"]
+      - apiGroups: [""]
         apiVersions: ["v1"]
         operations: ["CREATE", "UPDATE"]
-        resources: ["*"]
+        resources: ["pods"]
         scope: "Namespaced"
     clientConfig:
       service:
