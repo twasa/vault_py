@@ -10,9 +10,7 @@ spec:
       app: vault-py
   template:
     metadata:
-      annotations:
-        config.linkerd.io/default-inbound-policy: all-unauthenticated
-        linkerd.io/inject: enabled
+      annotations: {}
       labels:
         app: vault-py
     spec:
