@@ -90,7 +90,7 @@ def admission_resource_create(request_dict: dict[str, str]):
 async def mutation(request_data: Request):
     content_validation(request_data)
     request_dict = await request_data.json()
-    logger.info("`requst_json`: {request_dict}")
+    logger.info(f"`requst_json`: {request_dict}")
     admission_resource_create(request_dict)
     uid = admission_uid_parse(request_dict)
     content = {
