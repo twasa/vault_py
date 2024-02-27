@@ -74,7 +74,7 @@ def annotation_data_parse(request_data: dict[str, str]) -> dict:
         ]
         return annotation_data
     except KeyError as e:
-        logger.error(str(e))
+        logger.error(str(f"key: {str(e)} not exist"))
         return {}
 
 
