@@ -1,3 +1,5 @@
+import json
+
 from basemodels.vaultpy import VaultpyConfig
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -90,9 +92,10 @@ def admission_resource_create(request_dict: dict[str, str]):
 async def mutation(request_data: Request):
     content_validation(request_data)
     request_dict = await request_data.json()
-    logger.info(f"`requst_json`: {request_dict}")
     admission_resource_create(request_dict)
     uid = admission_uid_parse(request_dict)
+    with open(f"/tmp/{uid}.json", "w") as outfile:
+        json.dump(request_dict, outfile)
     content = {
         "apiVersion": "admission.k8s.io/v1",
         "kind": "AdmissionReview",
