@@ -14,7 +14,7 @@ def http_get(url: str, headers: dict[str, str] = None, **kwargs):
         http_session.headers.update(headers)
     response = http_session.get(url=url, headers={"Cache-Control": "no-cache"})
     if not response.status_code == 200:
-        message = f"http request error, url: {url}, code: {response.status_code}, message: {response.text}"
+        message = {"url": url, "code": response.status_code, "message": response.text}
         logger.error(message)
     return response
 
