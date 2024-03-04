@@ -27,7 +27,7 @@ def http_put(
         http_session.headers.update(headers)
     response = http_session.put(url=url, json=json_data)
     if not response.status_code == 200:
-        message = f"http request error, url: {url}, code: {response.status_code}, message: {response.text}"
+        message = {"url": url, "code": response.status_code, "message": response.text}
         logger.error(message)
     return response
 
@@ -40,7 +40,7 @@ def http_post(
         http_session.headers.update(headers)
     response = http_session.post(url=url, json=json_data)
     if not response.status_code == 200:
-        message = f"http request error, url: {url}, code: {response.status_code}, message: {response.text}"
+        message = {"url": url, "code": response.status_code, "message": response.text}
         logger.error(message)
     return response
 
