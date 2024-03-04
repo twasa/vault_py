@@ -6,7 +6,7 @@ namespace: vault-py
 images:
 - name: vault_py
   newName: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py
-  newTag: 0.30
+  newTag: "0.30"
 resources:
 - namespace.yaml
 - cluster_issuer.yaml
