@@ -4,16 +4,27 @@ generatorOptions:
   disableNameSuffixHash: true
 namespace: vault-py
 images:
-  - name: vault_py
-    newName: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py
-    newTag: 0.27.0
+- name: vault_py
+  newName: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py
+  newTag: 0.27.0
+
 resources:
-  - ../base
+- ../base
+
 configMapGenerator:
-  - name: vault-py-config
-    literals:
-      - VAULT_SCHEME=https
-      - VAULT_FQDN=vault.v16cp.me
-      - K8S_ANNOTATION_PREFIX=vaultpy.io
-      - VAULT_AUTH_K8S_PATH=hc-prod-eks
-      - VAULT_AUTH_K8S_ROLE=vault-py
+- name: vault-py-config
+  literals:
+  - VAULT_SCHEME=https
+  - VAULT_FQDN=vault.v16cp.me
+  - K8S_ANNOTATION_PREFIX=vaultpy.io
+  - VAULT_AUTH_K8S_PATH=hc-prod-eks
+  - VAULT_AUTH_K8S_ROLE=vault-py
+
+patches:
+- patch: |-
+    - op: add
+      path: /spec/template/metadata/labels/env
+      value: prod
+  target:
+    kind: Deployment
+    name: vault-py
