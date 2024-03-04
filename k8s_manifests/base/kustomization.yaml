@@ -3,15 +3,19 @@ kind: Kustomization
 generatorOptions:
   disableNameSuffixHash: true
 namespace: vault-py
+images:
+- name: vault_py
+  newName: 696813720027.dkr.ecr.ap-east-1.amazonaws.com/vault_py
+  newTag: 0.28.0
 resources:
-  - namespace.yaml
-  - cluster_issuer.yaml
-  - certificate-ca.yaml
-  - issuer-ca.yaml
-  - certificate.yaml
-  - service_account.yaml
-  - rbac.yaml
-  - admission.yaml
-  - deployment.yaml
-  - service.yaml
-  - pdb.yaml
+- namespace.yaml
+- cluster_issuer.yaml
+- certificate-ca.yaml
+- issuer-ca.yaml
+- certificate.yaml
+- service_account.yaml
+- rbac.yaml
+- admission.yaml
+- deployment.yaml
+- service.yaml
+- pdb.yaml
